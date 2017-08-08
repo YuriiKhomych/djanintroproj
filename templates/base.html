@@ -1,0 +1,40 @@
+{% load static from staticfiles %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+    {#    <link rel="stylesheet" href="{% static 'css/style.css' %}">#}
+</head>
+<body>
+<nav>
+    <div class="nav-wrapper #6a1b9a purple darken-3">
+        <a href="#" class="brand-logo ">Djanintroproj</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down ">
+            <li><a href="{% url 'all_articles' %}">Articles</a></li>
+            <li><a href="{% url 'all_events' %}">Events</a></li>
+            <li><a href="{% url 'all_users' %}">All users</a></li>
+            {% if request.user.is_authenticated %}
+                <li>Hello, {{ request.user.email }}</li>
+                <li><a href="{% url 'sign_out' %}">Sign out</a></li>
+            {% else %}
+                <li><a href="{% url 'sign_in' %}">Sign in</a></li>
+                <li><a href="{% url 'sign_up' %}">Sign up</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+{% block content %}
+{% endblock content %}
+
+</body>
+</html>

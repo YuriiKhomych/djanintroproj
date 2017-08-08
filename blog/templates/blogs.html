@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+{% load color_article %}
+
+
+{% block content %}
+
+    <form action="{% url 'all_articles' %}" method="GET">
+        {% csrf_token %}
+        <div class="row">
+            <div class="input-field col s6">
+                <label class="active" for="{{ form.search_text.id_for_label }}">Search keyword</label>
+                <div class="">
+                    {{ form.search_text }}
+                </div>
+                <button type="submit" class="waves-effect waves-light btn">Search!</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col s4">
+            {% for article in articles %}
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{% if article.image %}{{ article.image.url }}{% else %}http://placecage.com/500/500{% endif %}">
+                        <span class="card-title">{{ article.author.username }}:<br> {{ article.title }}</span>
+                    </div>
+                    <div class="card-content">
+                        <p>{{ article.body | safe }}</p>
+                        <p>{{ article.added | naturalday }}</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="{% url 'single_article_page' article_id=article.id %}">Show more</a>
+
+                        <a href="{% url 'like_article' article_id=article.id %}">
+                            {% if request.user in article.liked_by.all %}
+                                Dislike me {{ article.liked_by.all.count }}
+                            {% else %}
+                                Like me {{ article.liked_by.all.count }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+                <p style="color: {{ article.title | color }};">{{ article.title }}</p>
+            {% endfor %}
+            Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
+            <ul class="pagination">
+                {% if articles.has_previous %}
+                    <li class="waves-effect">
+                        <a href="?page={{ articles.previous_page_number }}&search_text={% if  form.search_text.value == None %}{{ '' }}{% else %}{{ form.search_text.value }}{% endif %}">
+                            <i class="material-icons">chevron_left</i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="waves-effect">
+                        <a>
+                            <i class="material-icons">chevron_left</i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for page in pagination %}
+                    {#                    1, 2, 3, [4], 5, 6, 7, 8, 9#}
+                    <li class="waves-effect {% if page == articles.number %}active{% endif %}">
+                        {% if page == '...' %}
+                            {{ page }}
+                        {% else %}
+                            <a href="?page={{ page }}&search_text={% if  form.search_text.value == None %}{{ '' }}{% else %}{{ form.search_text.value }}{% endif %}">{{ page }}</a></li>
+                        {% endif %}
+                {% endfor %}
+
+                {#                <li class="waves-effect"><a href="#!">2</a></li>#}
+                {#                <li class="waves-effect"><a href="#!">3</a></li>#}
+                {#                <li class="waves-effect"><a href="#!">4</a></li>#}
+                {#                <li class="waves-effect"><a href="#!">5</a></li>#}
+
+                {% if articles.has_next %}
+                    <li class="waves-effect">
+                        <a href="?page={{ articles.next_page_number }}&search_text={% if  form.search_text.value == None %}{{ '' }}{% else %}{{ form.search_text.value }}{% endif %}">
+                            <i class="material-icons">chevron_right</i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="waves-effect">
+                        <a>
+                            <i class="material-icons">chevron_right</i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock content %}
