@@ -1,11 +1,13 @@
 from django.conf.urls import url
 
 from blog.views import blogs, single_blog, user_articles, like_article,\
-    send_email_rest, ArticlesView, ArticlesAllAPI,ArticleCreateAPI, \
+    send_email_rest, ArticlesView, add_article,\
+    ArticlesAllAPI,ArticleCreateAPI, \
     ArticleRemoveAPI, ArticlesSearchAPI
 
 urlpatterns = [
     url(r'^$', blogs, name='all_articles'),
+    url(r'^new/$', add_article, name='add_article'),
     url(r'^single/(?P<article_id>\d+)/$', single_blog,
         name='single_article_page'),
     url(r'^single/(?P<article_id>\d+)/like/$', like_article,

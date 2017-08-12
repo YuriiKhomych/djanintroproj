@@ -1,9 +1,11 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect,\
-    Http404, get_object_or_404
+    Http404, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.views import View
+from django.utils import timezone
 
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.generics import ListAPIView, GenericAPIView
@@ -17,7 +19,7 @@ from rest_framework.validators import ValidationError
 from rest_framework.permissions import AllowAny
 
 from blog.models import Article
-from blog.forms import SearchForm
+from blog.forms import SearchForm, CreateNewArticle
 
 from blog.serializers import (
     ArticleSerializer,
@@ -40,7 +42,7 @@ def blogs(request):
         articles = Article.objects.filter(title__contains=keyword)
     else:
         form = SearchForm()
-        articles = Article.objects.all()
+        articles = Article.objects.order_by('-added').all()
 
     # pagination part
     page = request.GET.get('page', 1)
@@ -92,7 +94,24 @@ def like_article(request, article_id):
     else:
         return HttpResponseRedirect(reverse('sign_up'))
 
+def add_article(request):
+    if request.method == 'POST':
+        form = CreateNewArticle(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.published_date = timezone.now()
+            post.save()
+            return redirect('single_article_page', article_id=post.pk)
+    else:
+        form = CreateNewArticle()
+    return render(request, 'add_article.html', {'form': form})
 
+
+
+
+
+# REST API
 @api_view(['GET'])
 def send_email_rest(request):
     content = {

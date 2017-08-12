@@ -8,6 +8,7 @@
 
     <form action="{% url 'all_articles' %}" method="GET">
         {% csrf_token %}
+
         <div class="row">
             <div class="input-field col s6">
                 <label class="active" for="{{ form.search_text.id_for_label }}">Search keyword</label>
@@ -27,6 +28,7 @@
                         <img src="{% if article.image %}{{ article.image.url }}{% else %}http://placecage.com/500/500{% endif %}">
                         <span class="card-title">{{ article.author.username }}:<br> {{ article.title }}</span>
                     </div>
+                    <a class="btn-floating btn-large waves-effect waves-light red" href="{% url 'add_article' %}"><i class="material-icons">add</i></a>
                     <div class="card-content">
                         <p>{{ article.body | safe }}</p>
                         <p>{{ article.added | naturalday }}</p>
