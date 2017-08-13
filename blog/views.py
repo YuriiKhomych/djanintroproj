@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.views import View
 from django.utils import timezone
 
 from rest_framework.pagination import LimitOffsetPagination
@@ -95,17 +94,21 @@ def like_article(request, article_id):
         return HttpResponseRedirect(reverse('sign_up'))
 
 def add_article(request):
-    if request.method == 'POST':
-        form = CreateNewArticle(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('single_article_page', article_id=post.pk)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = CreateNewArticle(request.POST)
+            if form.is_valid():
+                article = form.save(commit=False)
+                article.author = request.user
+                article.published_date = timezone.now()
+                article.save()
+                return redirect('single_article_page', article_id=article.pk)
+        else:
+            form = CreateNewArticle()
+        return render(request, 'add_article.html', {'form': form})
     else:
-        form = CreateNewArticle()
-    return render(request, 'add_article.html', {'form': form})
+        return HttpResponseRedirect(reverse('sign_up'))
+
 
 
 

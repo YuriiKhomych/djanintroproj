@@ -4,7 +4,7 @@
 {% load rating_event %}
 
 {% block content %}
-
+    <a class="waves-effect waves-light btn" href="{% url 'add_event' %}">Add new event</a>
     <div class="row">
         <div class="col s12 m7">
             {% for event in events %}

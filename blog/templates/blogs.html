@@ -28,7 +28,7 @@
                         <img src="{% if article.image %}{{ article.image.url }}{% else %}http://placecage.com/500/500{% endif %}">
                         <span class="card-title">{{ article.author.username }}:<br> {{ article.title }}</span>
                     </div>
-                    <a class="btn-floating btn-large waves-effect waves-light red" href="{% url 'add_article' %}"><i class="material-icons">add</i></a>
+
                     <div class="card-content">
                         <p>{{ article.body | safe }}</p>
                         <p>{{ article.added | naturalday }}</p>
@@ -47,7 +47,8 @@
                 </div>
                 <p style="color: {{ article.title | color }};">{{ article.title }}</p>
             {% endfor %}
-            Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
+        <a class="waves-effect waves-light btn" href="{% url 'add_article' %}">Add new article</a>
+            Page {{ articles.number }} of {{ articles.paginator.num_pages }}
             <ul class="pagination">
                 {% if articles.has_previous %}
                     <li class="waves-effect">

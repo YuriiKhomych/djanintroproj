@@ -5,4 +5,5 @@
     Single blog page
     <h3>{{ article.title }}</h3>
     <p>{{ article.body | safe }}</p>
+    <a class="waves-effect waves-light btn" href="{% url 'add_article' %}">Add new article</a>
 {% endblock content %}
