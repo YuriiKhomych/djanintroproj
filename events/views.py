@@ -1,19 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.views import View
 from django.utils import timezone
 
-
-from accounts.models import User
 from events.models import Event
 from .forms import CreateNewEvent
-
 
 from utils import gen_page_list
 
 
 def events_list(request):
-    event = Event.objects.all()
+    event = Event.objects.order_by('-date').all()
     # event.members.add()
     # event.members.add(User.objects.get(email='test@gmail.com'))
     # event.members.remove(User.objects.get(email='test@gmail.com'))
@@ -39,6 +35,7 @@ def events_list(request):
     return render(request, 'events.html', {'events': final_events,
                                           'pagination': gen_page_list(page,p.num_pages)})
 
+
 def single_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     return render(request, 'single-event.html', {'event': event})
@@ -61,6 +58,17 @@ def add_event(request):
         return HttpResponseRedirect(reverse('all_events'))
 
 
+def join_member(request, event_id):
+    if request.user.is_authenticated:
+        event = get_object_or_404(Event, id=event_id)
+        if request.user in event.members.all():
+            event.members.remove(request.user)
+        else:
+            event.members.add(request.user)
+            event.save()
+        return HttpResponseRedirect(reverse('all_events'))
+    else:
+        return HttpResponseRedirect(reverse('sign_up'))
 
 # class Event(View):
 #     form_class = Event
@@ -89,5 +97,3 @@ def add_event(request):
 #             event.save()
 #             return redirect('single_event_page', event_id=event.pk)
 #         return render(request, 'add-event.html', {'form': form})
-
-
