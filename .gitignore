@@ -3,7 +3,7 @@
 
 # virtualenv
 ENV/*
-
+ENV2/
 # Pycharm
 .idea
 
