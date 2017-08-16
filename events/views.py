@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect, reverse
+from django.shortcuts import render, get_object_or_404, redirect,\
+    HttpResponseRedirect, reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils import timezone
 from django.views.generic import View

@@ -1,20 +1,21 @@
 from django.conf.urls import url
 
-from blog.views import blogs, single_blog, user_articles, like_article,\
-    send_email_rest, ArticlesView, add_article,\
+from blog.views import Home, SingleBlog, UserArticles, AddArticle,\
+    send_email_rest, ArticlesView, ArticleLike,\
     ArticlesAllAPI,ArticleCreateAPI, \
     ArticleRemoveAPI, ArticlesSearchAPI
 
 urlpatterns = [
-    url(r'^$', blogs, name='all_articles'),
-    url(r'^new/$', add_article, name='add_article'),
-    url(r'^single/(?P<article_id>\d+)/$', single_blog,
+    url(r'^$', Home.as_view(), name='all_articles'),
+    url(r'^new/$', AddArticle.as_view(), name='add_article'),
+    url(r'^single/(?P<article_id>\d+)/$', SingleBlog.as_view(),
         name='single_article_page'),
-    url(r'^single/(?P<article_id>\d+)/like/$', like_article,
+    url(r'^single/(?P<article_id>\d+)/like/$', ArticleLike.as_view(),
         name='like_article'),
-    url(r'^user/(?P<user_id>\d+)/$', user_articles,
+    url(r'^user/(?P<user_id>\d+)/$', UserArticles.as_view(),
         name='user_articles'),
 
+    # REST
     url(r'^send-email-rest/$', send_email_rest, name='send_email_rest'),
     url(r'^articles-rest/$', ArticlesView.as_view()),
     url(r'^articles-rest/(?P<pk>\d+)/$', ArticlesView.as_view()),
