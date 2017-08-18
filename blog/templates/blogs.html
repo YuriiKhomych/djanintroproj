@@ -2,13 +2,16 @@
 
 {% load humanize %}
 {% load color_article %}
+{% load static from staticfiles %}
 
 
 {% block content %}
-
+    <div class="parallax-container">
+        <div class="parallax"><img src="{% static "images/new-our-epic-road-trip-image.jpg" %}" alt="My image"></div>
+    </div>
+    <div class="container">
     <form action="{% url 'all_articles' %}" method="GET">
         {% csrf_token %}
-
         <div class="row">
             <div class="input-field col s6">
                 <label class="active" for="{{ form.search_text.id_for_label }}">Search keyword</label>
@@ -94,6 +97,10 @@
                 {% endif %}
             </ul>
         </div>
+    </div>
+    </div>
+    <div class="parallax-container">
+        <div class="parallax"><img src="{% static "images/IMG_7780.jpg" %}" alt="My image"></div>
     </div>
 
 {% endblock content %}
