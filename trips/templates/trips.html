@@ -1,39 +1,38 @@
 {% extends 'base.html' %}
 
 {% load humanize %}
-{% load rating_event %}
+{% load rating_trip %}
 
 {% block content %}
-    <a class="waves-effect waves-light btn" href="{% url 'add_event' %}">Add new event</a>
     <div class="row">
         <div class="col s12 m7">
-            {% for event in events %}
+            {% for trip in trips %}
                 <div class="card">
-                    <h5 class="header card-panel"><b>Name of event: {{ event.title }}
-                        <p style="color: lawngreen">{{ event.members.all.count | rating }}</p>
+                    <h5 class="header card-panel"><b>Name of trip: {{ trip.title }}
+                        <p style="color: lawngreen">{{ trip.passengers.all.count | rating }}</p>
 
                     </b></h5>
                     <div class="card horizontal">
                         <div class="card-image">
-                            <img src="{% if event.image %}{{ event.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
+                            <img src="{% if trip.image %}{{ trip.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
                         </div>
                         <span class="card-title">
-                        Creator of event: {{ event.creator }}<br>
-                        Date of event: {{ event.date }}<br>
+                        Creator of trip: {{ trip.creator }}<br>
+                        Date of trip: {{ trip.date }}<br>
                             <ul class="collapsible popout" data-collapsible="accordion">Members:
-                                {{ event.members.all.count }}<br>
+                                {{ trip.passengers.all.count }}<br>
                                 </ul>
                     </span>
                     </div>
                     <div class="card-action">
-                        <a href="{% url 'single_event_page' event_id=event.id %}">Show more</a>
+                        <a href="{% url 'single_trip_page' trip_id=trip.id %}">Show more</a>
                     </div>
                 </div>
             {% endfor %}
             <ul class="pagination">
-                {% if events.has_previous %}
+                {% if trips.has_previous %}
                     <li class="waves-effect">
-                        <a href="?page={{ events.previous_page_number }}">
+                        <a href="?page={{ trips.previous_page_number }}">
                             <i class="material-icons">chevron_left</i>
                         </a>
                     </li>
@@ -47,7 +46,7 @@
 
                 {% for page in pagination %}
                     {#                    1, 2, 3, [4], 5, 6, 7, 8, 9#}
-                    <li class="waves-effect {% if page == events.number %}active{% endif %}">
+                    <li class="waves-effect {% if page == trips.number %}active{% endif %}">
                         {% if page == '...' %}
                             {{ page }}
                         {% else %}
@@ -55,9 +54,9 @@
                         {% endif %}
                 {% endfor %}
 
-                {% if events.has_next %}
+                {% if trips.has_next %}
                     <li class="waves-effect">
-                        <a href="?page={{ events.next_page_number }}">
+                        <a href="?page={{ trips.next_page_number }}">
                             <i class="material-icons">chevron_right</i>
                         </a>
                     </li>

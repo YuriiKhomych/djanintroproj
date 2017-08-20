@@ -2,10 +2,12 @@
 
 
 {% block content %}
-    <h1>New event</h1>
-    <form action="{% url 'add_event' %}" method="POST" class="get-form">
+    <div class="container">
+    <h1>New road trip</h1>
+    <form action="{% url 'add_trip' %}" method="POST" class="get-form">
         {% csrf_token %}
         {{ form }}
         <button type="submit" class="save btn btn-default">Save</button>
     </form>
+    </div>
 {% endblock%}

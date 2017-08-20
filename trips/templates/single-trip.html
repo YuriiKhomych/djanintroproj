@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="thumbnail">
+                    <div class="caption">
+                        <p class="white-text card-panel #ff8f00 amber darken-3">
+                            <b>Date of road trip</b>
+                            <br>
+                            {{ trip.date }}</p>
+                        <p class="white-text card-panel #f57f17 yellow darken-4">
+                            <b>Passengers</b>
+                            <br> {{ trip.passengers.all.count }}</p>
+                        <p class="white-text card-panel #ffc400 amber accent-3">
+                            <b>Driver for road trip</b>
+                            <br> {{ trip.driver }}</p>
+                        <p class="white-text card-panel #ff9100 orange accent-3">
+                            <b>Passengers</b>
+                            <br> {% for onemember in trip.passengers.all %}
+                            {{ onemember }}<br/>
+                        {% endfor %}</p>
+                        <a href="{% url 'join_passenger' trip_id=trip.id %}">
+                            {% if request.user in trip.passengers.all %}
+                                Unjoin {{ trip.passengers.all.count }}
+                            {% else %}
+                                Join {{ trip.passengers.all.count }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

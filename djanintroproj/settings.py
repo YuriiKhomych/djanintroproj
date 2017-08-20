@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'blog',
     'core',
     'accounts',
-    'events',
+    'trips',
 
     # 3rd party apps
     'redactor',
