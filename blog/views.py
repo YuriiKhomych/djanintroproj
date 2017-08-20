@@ -47,7 +47,7 @@ class Home(View):
             articles = Article.objects.order_by('-added').all()
         # pagination part
         page = request.GET.get('page', 1)
-        p = Paginator(articles, 1)
+        p = Paginator(articles, 5)
         try:
             final_articles = p.page(page)
         except PageNotAnInteger:

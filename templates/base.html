@@ -12,37 +12,33 @@
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
-    {#    <link rel="stylesheet" href="{% static 'css/style.css' %}">#}
-    <script type="application/javascript">
-
-        $(document).ready(function(){
-      $('.parallax').parallax();
-    });</script>
+    <script type="application/javascript" src="{% static 'css/js.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 </head>
 <body>
 
- <div class="navbar-fixed">
-<nav class="transparent">
-    <div class="nav-wrapper">
-        <a href="#" class="brand-logo blue-text text-darken-2">Road Trip</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down ">
-            <li><a class="blue-text text-darken-2" href="{% url 'all_articles' %}">Articles</a></li>
-            <li><a class="blue-text text-darken-2" href="{% url 'all_events' %}">Events</a></li>
-            <li><a class="blue-text text-darken-2" href="{% url 'all_users' %}">All users</a></li>
-            {% if request.user.is_authenticated %}
-                <li class="blue-text text-darken-2">Hello, {{ request.user.email }}</li>
-                <li><a class="blue-text text-darken-2" href="{% url 'sign_out' %}">Sign out</a></li>
-            {% else %}
-                <li><a class="blue-text text-darken-2" href="{% url 'sign_in' %}">Sign in</a></li>
-                <li><a class="blue-text text-darken-2" href="{% url 'sign_up' %}">Sign up</a></li>
-            {% endif %}
-        </ul>
-    </div>
+<div class="navbar-fixed">
+    <nav class="transparent">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo blue-text text-darken-2">Road Trip</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down ">
+                <li><a class="blue-text text-darken-2" href="{% url 'all_articles' %}">Articles</a></li>
+                <li><a class="blue-text text-darken-2" href="{% url 'add_article' %}">Add new article</a></li>
+                <li><a class="blue-text text-darken-2" href="{% url 'all_events' %}">Events</a></li>
+                <li><a class="blue-text text-darken-2" href="{% url 'all_users' %}">All users</a></li>
+                {% if request.user.is_authenticated %}
+                    <li class="blue-text text-darken-2">Hello, {{ request.user.email }}</li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'sign_out' %}">Sign out</a></li>
+                {% else %}
+                    <li><a class="blue-text text-darken-2" href="{% url 'sign_in' %}">Sign in</a></li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'sign_up' %}">Sign up</a></li>
+                {% endif %}
+            </ul>
+        </div>
 
-</nav>
+    </nav>
 
- </div>
+</div>
 
 {% block content %}
 {% endblock content %}
