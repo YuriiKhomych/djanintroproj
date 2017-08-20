@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
+from django.core.exceptions import ValidationError
 
 import os
 import uuid
@@ -75,3 +76,23 @@ def send_email(subject, user, template, content):
     msg = EmailMessage(subject, message, from_email=from_email, bcc=[user], reply_to=[reply_to])
     msg.content_subtype = 'html'
     msg.send()
+
+def validate_phone(value):
+    codes = {'039',
+             '050',
+             '063',
+             '066',
+             '067',
+             '068',
+             '091',
+             '092',
+             '093',
+             '094',
+             '095',
+             '096',
+             '097',
+             '098',
+             '099'}
+    if str(value)[3:6] not in codes or len(value) != 13:
+        raise ValidationError('%(value)s is not a valid phone number',
+                              params={'value': value},)
