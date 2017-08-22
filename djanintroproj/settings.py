@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     'redactor',
     'solo',
+    'bootstrap3',
     'rest_framework',
     'rest_framework_docs',
     'rest_framework.authtoken',
