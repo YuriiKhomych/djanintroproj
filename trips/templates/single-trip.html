@@ -1,18 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% load bootstrap3 %}
-    <style>
-        .yellow {
-            color: yellow;
-        }
-        .desctext {
-            text-align: justify;
-        }
-        .comentedit {
-            color: darkgrey;
-            font-size: 1.5ch;
-        }
-    </style>
+
     <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
@@ -50,15 +38,15 @@
                     <h5>{{ comment.author }}, <img src="{{ comment.author.avatar.url }}" class="img-circle" width="50"
                                                    height="50"> {{ comment.author.avatar_url }}
                         {% if comment.author_id == request.user.id or request.user.is_admin %}
-                            <a href="{% url "delete_comment" comment_id=comment.id%}?next={{ request.path }}" class="pull-right">{% bootstrap_icon "remove-circle" %}</a>
-                            <a href="{% url "edit_comment" comment_id=comment.id %}?next={{ request.path }}" class="pull-right">{% bootstrap_icon "pencil" %}</a>
+                            <a href="{% url "delete_comment" comment_id=comment.id%}">delete</a>
+                            <a href="{% url "edit_comment" comment_id=comment.id %}">edit</a>
                         {% endif %}
                     </h5>
                     <hr>
                     <h6 class="pull-right">Date: {{ comment.date }}<br>
-                        Rating: {{ comment.rating }} {% bootstrap_icon 'star' extra_classes="yellow"%}</h6>
-                    <p>{% bootstrap_icon 'thumbs-up' %} {{ comment.positive }}</p>
-                    <p>{% bootstrap_icon 'thumbs-down' %} {{ comment.negative }}</p>
+                        Rating: {{ comment.rating }}</h6>
+                    <p> {{ comment.positive }}</p>
+                    <p>{{ comment.negative }}</p>
                     <p>{{ comment.body }}</p>
                     {% if comment.edit_date != null %}
                         <p class="comentedit">Edited {{ comment.edit_amount }} times. Last edit: {{ comment.edit_date }}</p>
@@ -73,13 +61,10 @@
                     <hr>
                     <form action="{% url 'single_trip_page' trip_id=trip.id %}" method="post" class="form">
                         {% csrf_token %}
-                        {% bootstrap_form commentform %}
-                        {% buttons %}
+                        {{ commentform }}
                             <button type="submit" class="btn btn-primary">
                                 Submit
-                                {% bootstrap_icon "ok" %}
                             </button>
-                        {% endbuttons %}
                     </form>
                     {% if commentform.errors %}
                         {% for field in commentform %}

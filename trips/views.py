@@ -122,21 +122,20 @@ class DelComment(View):
         if request.user.is_authenticated:
             comment = Comment.objects.get(pk=comment_id)
             comment.delete()
-        return HttpResponseRedirect('all_trips')
-
+        return redirect('all_trips')
 
 class EditComment(View):
     def get(self, request, comment_id):
         comment = get_object_or_404(Comment, pk=comment_id)
-        if comment.author_id == request.user.id or request.user.is_admin:
+        if comment.author_id == request.user.id:
             form = CommentForm(instance=comment)
             return render(request, "edit_comment.html", {"form": form, "comment": comment})
-        HttpResponseRedirect(reverse("all_trips"))
+        return redirect('all_trips')
 
     def post(self, request, comment_id):
         form = CommentForm(request.POST)
         comment_old = Comment.objects.get(pk=comment_id)
-        if form.is_valid() and (request.user.is_admin or comment_old.author_id == request.user.id):
+        if form.is_valid() and (comment_old.author_id == request.user.id):
             comment_old.positive = form.cleaned_data["positive"]
             comment_old.negative = form.cleaned_data["negative"]
             comment_old.body = form.cleaned_data["body"]
@@ -144,4 +143,4 @@ class EditComment(View):
             comment_old.edit_amount += 1
             comment_old.edit_date = datetime.now()
             comment_old.save()
-        return HttpResponseRedirect('all_trips')
+        return redirect('all_trips')
