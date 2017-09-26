@@ -1,13 +1,59 @@
-{% extends 'base.html' %}
+{% load static from staticfiles %}
 
 
-{% block content %}
-    <div class="container">
-    <h1>New road trip</h1>
-    <form action="{% url 'add_trip' %}" method="POST" class="get-form">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit" class="save btn btn-default">Save</button>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>$.geocomplete()</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
+
+    <form>
+      <input id="geocomplete" type="text" placeholder="Type in an address" size="90" />
+      <input id="find" type="button" value="find" />
     </form>
+
+    <div id="examples">
+      Examples:
+      <a href="#">Hamburg, Germany</a>
+      <a href="#">3rr0r</a>
+      <a href="#">Hauptstraße</a>
     </div>
-{% endblock%}
+
+    <pre id="logger">Log:</pre>
+
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCBZ9esNI9HL2WZUwDO24y9UjiyTOQM2g0&sensor=false&amp;libraries=places"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+ <script src="{% static 'js/jquery.geocomplete.js' %}" ></script>
+    <script src="{% static 'js/logger.js' %}" ></script>
+
+    <script>
+      $(function(){
+
+        $("#geocomplete").geocomplete()
+          .bind("geocode:result", function(event, result){
+            $.log("Result: " + result.formatted_address);
+          })
+          .bind("geocode:error", function(event, status){
+            $.log("ERROR: " + status);
+          })
+          .bind("geocode:multiple", function(event, results){
+            $.log("Multiple: " + results.length + " results found");
+          });
+
+        $("#find").click(function(){
+          $("#geocomplete").trigger("geocode");
+        });
+
+
+        $("#examples a").click(function(){
+          $("#geocomplete").val($(this).text()).trigger("geocode");
+          return false;
+        });
+
+      });
+    </script>
+  </body>
+</html>
