@@ -5,6 +5,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+
     <title>Title</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -12,7 +14,9 @@
             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+
     <script type="application/javascript" src="{% static 'js/js.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 </head>
 <body>
@@ -43,6 +47,9 @@
 
 {% block content %}
 {% endblock content %}
+    <script type="application/javascript" src="{% static 'js/js2.js' %}"></script>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBZ9esNI9HL2WZUwDO24y9UjiyTOQM2g0&libraries=places&callback=initMap"
+            async defer></script>
 </body>
 </html>

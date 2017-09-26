@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
 
-
+{% load static from staticfiles %}
 {% block content %}
-    <div class="container">
-    <h1>New road trip</h1>
-    <form action="{% url 'add_trip' %}" method="POST" class="get-form">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
+
+
+    <div class="pac-card" id="pac-card">
+
+      <div id="pac-container">
+        <input id="pac-input" type="text"
+            placeholder="Enter a location">
+      </div>
     </div>
-{% endblock%}
+
+    <div id="map"></div>
+    <div id="infowindow-content">
+      <img src="" width="16" height="16" id="place-icon">
+      <span id="place-name"  class="title"></span><br>
+      <span id="place-address"></span>
+    </div>
+
+        <script type="application/javascript" src="{% static 'js/js2.js' %}"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBZ9esNI9HL2WZUwDO24y9UjiyTOQM2g0&libraries=places&callback=initMap"
+        async defer></script>
+{% endblock content %}
