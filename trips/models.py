@@ -14,8 +14,8 @@ def validate_rating(value):
 class Trip(models.Model):
     from_city = models.CharField(max_length=255)
     destination_city = models.CharField(max_length=255)
-    date = models.DateField(blank=True)
-    time = models.TimeField(blank=True)
+    date = models.DateField(default=datetime.now, blank=True)
+    time = models.TimeField(default=datetime.now, blank=True)
     passengers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='passengers')
     max_passengers = models.CharField(max_length=255)
     driver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='driver')
