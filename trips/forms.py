@@ -9,6 +9,13 @@ class CreateNewTrip(forms.ModelForm):
     class Meta:
         model = Trip
         fields = ('from_city', 'destination_city', 'date', 'time')
+        widgets = {
+
+            'from_city': forms.TextInput(attrs={'class': 'geocomplete'}),
+            'destination_city': forms.TextInput(attrs={'class': 'geocomplete'}),
+            'date': forms.TextInput(attrs={'class': 'datepicker'}),
+            'time': forms.TextInput(attrs={'class': 'timepicker'}),
+        }
 
 def validate_positive(value):
     if value < 0:
