@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 
 from django.conf import settings
 
-from datetime import datetime
+from datetime import date
+
 
 def validate_rating(value):
     if value > 10 or value < 0:
@@ -14,8 +15,8 @@ def validate_rating(value):
 class Trip(models.Model):
     from_city = models.CharField(max_length=255)
     destination_city = models.CharField(max_length=255)
-    date = models.DateField(default=datetime.now, blank=True)
-    time = models.TimeField(default=datetime.now, blank=True)
+    date = models.DateField(default=date.today(), blank=True)
+    time = models.TimeField(blank=True)
     passengers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='passengers')
     max_passengers = models.CharField(max_length=255)
     driver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='driver')

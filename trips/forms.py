@@ -17,9 +17,12 @@ class CreateNewTrip(forms.ModelForm):
             'time': forms.TextInput(attrs={'class': 'timepicker'}),
         }
 
+
 def validate_positive(value):
     if value < 0:
-        raise ValidationError('%(value)s is not positive!', params={'value': value})
+        raise ValidationError('%(value)s is not positive!',
+                              params={'value': value})
+
 
 class CommentForm(forms.ModelForm):
 
@@ -36,4 +39,6 @@ class CommentForm(forms.ModelForm):
 
 
 class AddToCartForm(forms.Form):
-    counter = forms.IntegerField(widget=forms.NumberInput, label="Amount", validators=[validate_positive])
+    counter = forms.IntegerField(widget=forms.NumberInput,
+                                 label="Amount",
+                                 validators=[validate_positive])
