@@ -8,12 +8,13 @@
         <form action="{% url 'all_trips' %}" method="GET">
             {% csrf_token %}
             <div class="row">
+                <h5>Please put destination for your trip</h5>
                 <div class="input-field">
-                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Search keyword</label>
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">From city</label>
                         {{ form.search_from_city }}
                 </div>
                 <div class="input-field">
-                    <label class="active" for="{{ form.search_destination.id_for_label }}">Search keyword</label>
+                    <label class="active" for="{{ form.search_destination.id_for_label }}">To city</label>
                         {{ form.search_destination }}
                 </div>
                 <button type="submit" class="waves-effect waves-light btn">Search!</button>
@@ -35,15 +36,18 @@
                                 <img src="{% if trip.image %}{{ trip.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
                             </div>
                             <span class="card-title">
-                        Creator of trip: {{ trip.creator }}<br>
+                        Creator of trip: {{ trip.driver }}<br>
+                        Maximum passengers: {{ trip.max_passengers }}<br>
                         Date of trip: {{ trip.date }}<br>
-                            <ul class="collapsible popout" data-collapsible="accordion">Members:
+                            <ul class="collapsible popout" data-collapsible="accordion">
+                                Members:
                                 {{ trip.passengers.all.count }}<br>
                                 </ul>
                     </span>
                         </div>
                         <div class="card-action">
-                            <a href="{% url 'single_trip_page' trip_id=trip.id %}">Show more</a>
+                            <a href="{% url 'single_trip_page' trip_id=trip.id %}">
+                                Show more</a>
                         </div>
                     </div>
                 {% endfor %}
