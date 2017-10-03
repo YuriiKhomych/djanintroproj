@@ -9,10 +9,20 @@ class CreateNewTrip(forms.ModelForm):
     class Meta:
         model = Trip
         fields = ('from_city', 'destination_city', 'date', 'time')
+        widgets = {
+
+            'from_city': forms.TextInput(attrs={'class': 'geocomplete'}),
+            'destination_city': forms.TextInput(attrs={'class': 'geocomplete'}),
+            'date': forms.TextInput(attrs={'class': 'datepicker'}),
+            'time': forms.TextInput(attrs={'class': 'timepicker'}),
+        }
+
 
 def validate_positive(value):
     if value < 0:
-        raise ValidationError('%(value)s is not positive!', params={'value': value})
+        raise ValidationError('%(value)s is not positive!',
+                              params={'value': value})
+
 
 class CommentForm(forms.ModelForm):
 
@@ -29,4 +39,6 @@ class CommentForm(forms.ModelForm):
 
 
 class AddToCartForm(forms.Form):
-    counter = forms.IntegerField(widget=forms.NumberInput, label="Amount", validators=[validate_positive])
+    counter = forms.IntegerField(widget=forms.NumberInput,
+                                 label="Amount",
+                                 validators=[validate_positive])
