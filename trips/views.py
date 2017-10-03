@@ -7,7 +7,7 @@ from django.db.utils import IntegrityError
 
 
 from .models import Trip, Comment
-from .forms import CreateNewTrip, CommentForm, AddToCartForm
+from .forms import CreateNewTrip, CommentForm, AddToCartForm, SearchForm
 
 from datetime import datetime
 
@@ -17,9 +17,20 @@ from utils import gen_page_list
 class AllTrips(View):
 
     def get(self, request):
-        trip = Trip.objects.all()
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            keyword_search_from_city = request.GET.get('search_from_city', '')
+            keyword_search_destination = request.GET.get('search_destination', '')
+            trips = Trip.objects.filter(
+                from_city__contains=keyword_search_from_city,
+                destination_city__contains=keyword_search_destination,
+            )
+        else:
+            form = SearchForm()
+            trips = Trip.objects.all()
+        # trip = Trip.objects.all()
         page = request.GET.get('page', 1)
-        p = Paginator(trip, 1)
+        p = Paginator(trips, 1)
         try:
             final_trips = p.page(page)
         except PageNotAnInteger:
@@ -31,6 +42,7 @@ class AllTrips(View):
         return render(request,
                       'trips.html',
                       {'trips': final_trips,
+                       'form': form,
                        'pagination': gen_page_list(page, p.num_pages)})
 
 
@@ -54,8 +66,6 @@ class SingleTrip(View):
                            "commentform": commentform, "cartform": cartform})
         else:
             return HttpResponseRedirect(reverse('sign_up'))
-
-
 
     def post(self, request, trip_id):
         commentform = CommentForm(request.POST)
