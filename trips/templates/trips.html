@@ -4,70 +4,89 @@
 {% load rating_trip %}
 
 {% block content %}
-    <div class="row">
-        <div class="col s12 m7">
-            {% for trip in trips %}
-                <div class="card">
-                    <h5 class="header card-panel"><b>Name of trip: {{ trip.title }}
-                        <p style="color: lawngreen">{{ trip.passengers.all.count | rating }}</p>
+    <div class="container">
+        <form action="{% url 'all_trips' %}" method="GET">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Search keyword</label>
+                        {{ form.search_from_city }}
+                </div>
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_destination.id_for_label }}">Search keyword</label>
+                        {{ form.search_destination }}
+                </div>
+                <button type="submit" class="waves-effect waves-light btn">Search!</button>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col s12 m7">
+                {% for trip in trips %}
+                    <div class="card">
+                        <h5 class="header card-panel"><b>
+                            From:
+                            {{ trip.from_city }} <br>
+                            to {{ trip.destination_city }}
+                            <p style="color: lawngreen">{{ trip.passengers.all.count | rating }}</p>
 
-                    </b></h5>
-                    <div class="card horizontal">
-                        <div class="card-image">
-                            <img src="{% if trip.image %}{{ trip.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
-                        </div>
-                        <span class="card-title">
+                        </b></h5>
+                        <div class="card horizontal">
+                            <div class="card-image">
+                                <img src="{% if trip.image %}{{ trip.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
+                            </div>
+                            <span class="card-title">
                         Creator of trip: {{ trip.creator }}<br>
                         Date of trip: {{ trip.date }}<br>
                             <ul class="collapsible popout" data-collapsible="accordion">Members:
                                 {{ trip.passengers.all.count }}<br>
                                 </ul>
                     </span>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'single_trip_page' trip_id=trip.id %}">Show more</a>
+                        </div>
                     </div>
-                    <div class="card-action">
-                        <a href="{% url 'single_trip_page' trip_id=trip.id %}">Show more</a>
-                    </div>
-                </div>
-            {% endfor %}
-            <ul class="pagination">
-                {% if trips.has_previous %}
-                    <li class="waves-effect">
-                        <a href="?page={{ trips.previous_page_number }}">
-                            <i class="material-icons">chevron_left</i>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="waves-effect">
-                        <a>
-                            <i class="material-icons">chevron_left</i>
-                        </a>
-                    </li>
-                {% endif %}
-
-                {% for page in pagination %}
-                    {#                    1, 2, 3, [4], 5, 6, 7, 8, 9#}
-                    <li class="waves-effect {% if page == trips.number %}active{% endif %}">
-                        {% if page == '...' %}
-                            {{ page }}
-                        {% else %}
-                            <a href="?page={{ page }}">{{ page }}</a></li>
-                        {% endif %}
                 {% endfor %}
+                <ul class="pagination">
+                    {% if trips.has_previous %}
+                        <li class="waves-effect">
+                            <a href="?page={{ trips.previous_page_number }}">
+                                <i class="material-icons">chevron_left</i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="waves-effect">
+                            <a>
+                                <i class="material-icons">chevron_left</i>
+                            </a>
+                        </li>
+                    {% endif %}
 
-                {% if trips.has_next %}
-                    <li class="waves-effect">
-                        <a href="?page={{ trips.next_page_number }}">
-                            <i class="material-icons">chevron_right</i>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="waves-effect">
-                        <a>
-                            <i class="material-icons">chevron_right</i>
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
+                    {% for page in pagination %}
+                        {#                    1, 2, 3, [4], 5, 6, 7, 8, 9#}
+                        <li class="waves-effect {% if page == trips.number %}active{% endif %}">
+                            {% if page == '...' %}
+                                {{ page }}
+                            {% else %}
+                                <a href="?page={{ page }}">{{ page }}</a></li>
+                            {% endif %}
+                    {% endfor %}
+
+                    {% if trips.has_next %}
+                        <li class="waves-effect">
+                            <a href="?page={{ trips.next_page_number }}">
+                                <i class="material-icons">chevron_right</i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="waves-effect">
+                            <a>
+                                <i class="material-icons">chevron_right</i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 

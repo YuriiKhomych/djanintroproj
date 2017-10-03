@@ -4,6 +4,15 @@ from django.core.exceptions import ValidationError
 from .models import Trip, Comment
 
 
+class SearchForm(forms.Form):
+    search_from_city = forms.CharField(max_length=20, widget=forms.TextInput({
+        'class': 'form-control'
+    }))
+    search_destination = forms.CharField(max_length=20, widget=forms.TextInput({
+        'class': 'form-control'
+    }))
+
+
 class CreateNewTrip(forms.ModelForm):
 
     class Meta:

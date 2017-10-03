@@ -82,6 +82,7 @@ class UserArticles(View):
         return render(request, 'user-blog.html', {'articles': articles,
                                                   'user': user})
 
+
 class ArticleLike(View):
     def get(self, request, article_id):
         if request.user.is_authenticated:
@@ -94,6 +95,7 @@ class ArticleLike(View):
             return HttpResponseRedirect(reverse('all_articles'))
         else:
             return HttpResponseRedirect(reverse('sign_up'))
+
 
 class AddArticle(View):
     def get(self, request):
