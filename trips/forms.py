@@ -24,6 +24,10 @@ class CreateNewTrip(forms.ModelForm):
             'destination_city': forms.TextInput(attrs={'class': 'geocomplete'}),
             'date': forms.TextInput(attrs={'class': 'datepicker'}),
             'time': forms.TextInput(attrs={'class': 'timepicker'}),
+            'max_passengers': forms.TextInput(attrs={'type': 'range',
+                                                     'id': 'test5',
+                                                     'min': '1',
+                                                     'max': '8'}),
         }
 
 
