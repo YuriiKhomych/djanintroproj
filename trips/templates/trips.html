@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static from staticfiles %}
 
 {% load humanize %}
 {% load rating_trip %}
@@ -93,5 +94,6 @@
             </div>
         </div>
     </div>
+    <script src="{% static 'js/geocomplete.js' %}" ></script>
 
 {% endblock content %}
