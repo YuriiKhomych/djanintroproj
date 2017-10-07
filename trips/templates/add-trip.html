@@ -9,7 +9,26 @@
             <h1>Add road trip</h1>
             <form action="{% url 'add_trip' %}" method="POST" class="get-form">
                 {% csrf_token %}
-                {{ form }}
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">From city</label>
+                    {{ form.from_city }}
+                </div>
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Destination city</label>
+                    {{ form.destination_city }}
+                </div>
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Date for start trip</label>
+                    {{ form.date }}
+                </div>
+                <div class="input-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Time for start trip</label>
+                    {{ form.time }}
+                </div>
+                <p class="range-field">
+                    <label class="active" for="{{ form.search_from_city.id_for_label }}">Maximum passengers</label>
+                    {{ form.max_passengers }}
+                </p>
                 <input class="btn waves-effect waves-light" type="submit" >
             </form>
         </div>
