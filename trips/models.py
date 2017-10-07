@@ -8,8 +8,9 @@ from datetime import date
 
 def validate_rating(value):
     if value > 10 or value < 0:
-        raise ValidationError("%(value)s is not a valid rating. Rating must be 0 >= value <= 10",
-                              params={"value": value}, )
+        raise ValidationError(
+            "%(value)s is not a valid rating. Rating must be 0 >= value <= 10",
+            params={"value": value})
 
 
 class Trip(models.Model):
@@ -17,13 +18,16 @@ class Trip(models.Model):
     destination_city = models.CharField(max_length=255)
     date = models.DateField(default=date.today(), blank=True)
     time = models.TimeField(blank=True)
-    passengers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='passengers')
+    passengers = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                        related_name='passengers')
     max_passengers = models.CharField(max_length=255)
     driver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='driver')
     views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return '{} | {}'.format(self.driver, self.from_city, self.destination_city)
+        return '{} | {}'.format(self.driver,
+                                self.from_city,
+                                self.destination_city)
 
 
 class Comment(models.Model):
@@ -37,7 +41,7 @@ class Comment(models.Model):
                                  decimal_places=1,
                                  blank=True,
                                  null=True,
-                                 validators=[validate_rating,])
+                                 validators=[validate_rating])
     date = models.DateTimeField(auto_now_add=True, null=True)
     edit_date = models.DateTimeField(blank=True, null=True)
     edit_amount = models.IntegerField(default=0)
@@ -47,5 +51,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return "{} {} {}".format(self.author, self.trip, self.rating)
-
-
