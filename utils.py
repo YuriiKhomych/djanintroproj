@@ -7,6 +7,7 @@ import os
 import uuid
 import random
 import string
+import urllib
 
 
 def get_file_path(instance, filename):
@@ -69,9 +70,11 @@ def send_email(subject, user, template, content):
     ctx = {
         'first_name': content.get('first_name'),
         'last_name': content.get('last_name'),
+        'phone': content.get('phone'),
+        'email': content.get('email'),
     }
-    from_email = "no-reply@klickjam.com"
-    reply_to = "qweqwe"
+    from_email = "RoadTrip@gmail.com"
+    reply_to = ctx['email']
     message = get_template(template).render(ctx)
     msg = EmailMessage(subject, message, from_email=from_email, bcc=[user], reply_to=[reply_to])
     msg.content_subtype = 'html'
