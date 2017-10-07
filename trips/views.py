@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect,\
+from django.shortcuts import render, get_object_or_404, redirect, \
     HttpResponseRedirect, reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils import timezone
@@ -11,7 +11,7 @@ from .forms import CreateNewTrip, CommentForm, AddToCartForm, SearchForm
 
 from datetime import datetime
 
-from utils import gen_page_list
+from utils import gen_page_list, send_email
 
 
 class AllTrips(View):
@@ -105,9 +105,23 @@ class JoinTrip(View):
     def get(self, request, trip_id):
         if request.user.is_authenticated:
             trip = get_object_or_404(Trip, id=trip_id)
+            content = {
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'phone': request.user.phone,
+                'email': request.user.email,
+            }
             if request.user in trip.passengers.all():
+                send_email('Road Trip',
+                           trip.driver.email,
+                           'unjoin-to-trip.html',
+                           content)
                 trip.passengers.remove(request.user)
             else:
+                send_email('Road Trip',
+                           trip.driver.email,
+                           'join-to-trip.html',
+                           content)
                 trip.passengers.add(request.user)
                 trip.save()
             return HttpResponseRedirect(reverse('single_trip_page',
