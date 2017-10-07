@@ -17,7 +17,7 @@ class CreateNewTrip(forms.ModelForm):
 
     class Meta:
         model = Trip
-        fields = ('from_city', 'destination_city', 'date', 'time')
+        fields = ('from_city', 'destination_city', 'date', 'time', 'max_passengers')
         widgets = {
 
             'from_city': forms.TextInput(attrs={'class': 'geocomplete'}),
