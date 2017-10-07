@@ -20,7 +20,8 @@ class AllTrips(View):
         form = SearchForm(request.GET)
         if form.is_valid():
             keyword_search_from_city = request.GET.get('search_from_city', '')
-            keyword_search_destination = request.GET.get('search_destination', '')
+            keyword_search_destination = request.GET.get(
+                'search_destination', '')
             trips = Trip.objects.filter(
                 from_city__contains=keyword_search_from_city,
                 destination_city__contains=keyword_search_destination,
@@ -48,7 +49,7 @@ class AllTrips(View):
 
 class SingleTrip(View):
 
-    def get(self ,request, trip_id):
+    def get(self, request, trip_id):
         if request.user.is_authenticated:
             trip = get_object_or_404(Trip, pk=trip_id)
             trip.views += 1
@@ -88,9 +89,16 @@ class SingleTrip(View):
             try:
                 comm.save()
             except IntegrityError:
-                commentform.add_error("positive", "You already added the comment. Edit the existing one!")
-        return render(request, "single-trip.html", {"trip": trip, "comments": comments,
-                                                       "commentform": commentform, "cartform": cartform})
+                commentform.add_error(
+                    "positive",
+                    "You already added the comment. Edit the existing one!")
+        return render(request,
+                      "single-trip.html",
+                      {"trip": trip,
+                       "comments": comments,
+                       "commentform": commentform,
+                       "cartform": cartform})
+
 
 class JoinTrip(View):
 
@@ -134,12 +142,14 @@ class DelComment(View):
             comment.delete()
         return redirect('all_trips')
 
+
 class EditComment(View):
     def get(self, request, comment_id):
         comment = get_object_or_404(Comment, pk=comment_id)
         if comment.author_id == request.user.id:
             form = CommentForm(instance=comment)
-            return render(request, "edit_comment.html", {"form": form, "comment": comment})
+            return render(request, "edit_comment.html",
+                          {"form": form, "comment": comment})
         return redirect('all_trips')
 
     def post(self, request, comment_id):
