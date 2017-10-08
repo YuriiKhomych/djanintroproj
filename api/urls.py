@@ -14,7 +14,13 @@ from .views import (
     ArticlesAllAPI,
     ArticleCreateAPI,
     ArticleRemoveAPI,
-    ArticlesSearchAPI
+    ArticlesSearchAPI,
+    # trip
+    TripView,
+    TripAllAPI,
+    TripCreateAPI,
+    TripRemoveAPI,
+    TripSearchAPI
 )
 
 urlpatterns = [
@@ -34,4 +40,11 @@ urlpatterns = [
     url(r'^articles-create-api/$', ArticleCreateAPI.as_view()),
     url(r'^articles-remove-api/$', ArticleRemoveAPI.as_view()),
     url(r'^articles-search-api/$', ArticlesSearchAPI.as_view()),
+    # trip API
+    url(r'^trip-rest/$', TripView.as_view()),
+    url(r'^trip-rest/(?P<pk>\d+)/$', TripView.as_view()),
+    url(r'^trip-all-api/$', TripAllAPI.as_view()),
+    url(r'^trip-create-api/$', TripCreateAPI.as_view()),
+    url(r'^trip-remove-api/$', TripRemoveAPI.as_view()),
+    url(r'^trip-search-api/$', TripSearchAPI.as_view()),
 ]

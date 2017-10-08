@@ -274,4 +274,50 @@ class ArticleSearchSerializer(serializers.Serializer):
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = ('id', 'from_city')
+        fields = ('id', 'from_city', 'destination_city')
+
+
+class TripFullDataSerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the
+    interface with full information about road trip:
+    title, body, data, author, liked_by.
+    """
+
+    class Meta:
+        model = Trip
+        fields = ['id', 'from_city', 'destination_city', 'date', 'time',
+                  'passengers', 'max_passengers', 'driver', 'views']
+
+
+class TripCreateSerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the
+    interface for creating new Trip.
+    User can write only article title and body,
+    author and data will add automaticaly.
+    """
+    class Meta:
+        model = Trip
+        fields = ['from_city', 'destination_city', 'date', 'time',
+                  'max_passengers', 'driver']
+
+
+class TripRemoveSerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the interface for removing
+    trip by from_city and destination_city fields,
+    """
+    title = serializers.CharField()
+
+    class Meta:
+        model = Article
+        fields = ['from_city', 'destination_city']
+
+
+class TripSearchSerializer(serializers.Serializer):
+    """
+    Class based on Serializer model and describes the interface for searching
+    trip by some words or letters in article title or body.
+    """
+    search_keyword = serializers.CharField()

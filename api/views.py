@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 
@@ -17,6 +18,7 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 
 from accounts.models import User
 from blog.models import Article
+from trips.models import Trip
 
 
 from .serializers import (UserLoginSerializer, UserSerializer,
@@ -27,7 +29,12 @@ from .serializers import (UserLoginSerializer, UserSerializer,
     ArticleFullDataSerializer,
     ArticleCreateSerializer,
     ArticleRemoveSerializer,
-    ArticleSearchSerializer
+    ArticleSearchSerializer,
+    TripCreateSerializer,
+    TripFullDataSerializer,
+    TripRemoveSerializer,
+    TripSearchSerializer,
+    TripSerializer
 )
 
 
@@ -224,6 +231,7 @@ class MainUserFieldsView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+# blog API
 class ArticlesView(GenericAPIView):
     serializer_class = ArticleSerializer
 
@@ -311,6 +319,120 @@ class ArticleRemoveAPI(APIView):
 
 
 class ArticlesSearchAPI(APIView):
+    """
+    This view will found all articles by input user keyword in title and body,
+    and return all of them.
+    """
+    serializer_class = ArticleSearchSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            keyword = serializer.validated_data.get('search_keyword')
+            # filter by input user keyword in articles title and body
+            articles = Article.objects.filter(
+                Q(title__contains=keyword) | Q(body__contains=keyword))
+            return Response(ArticleFullDataSerializer(
+                articles, many=True).data)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+# trip API
+class TripView(GenericAPIView):
+    serializer_class = TripSerializer
+
+    def get_queryset(self):
+        return Trip.objects.all().order_by('id')
+
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('pk'):
+            trip = self.get_object()
+            serializer = self.serializer_class(trip)
+            return Response(serializer.data)
+        else:
+            return self.list(request)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+
+class TripAllAPI(ListAPIView):
+    """
+    This view will return response with full articles
+    (title, body, data, author, liked_by),
+    but divided into 10 users objects at the one response.
+    Used limit and offset.
+    """
+    queryset = Trip.objects.all()
+    serializer_class = TripFullDataSerializer
+    pagination_class = LimitOffsetPagination
+
+
+class TripCreateAPI(APIView):
+    """
+    This view will check input user unique title name and then,
+    if data is valid, create new article
+    and return success message
+    """
+    serializer_class = TripCreateSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            validate_data = serializer.validated_data
+            # create new article and save in base
+            new_trip = Trip.objects.create(
+                from_city=validate_data.get('from_city'),
+                destination_city=validate_data.get('destination_city'),
+                date=validate_data.get('date'),
+                time=validate_data.get('time'),
+                max_passengers=validate_data.get('max_passengers'),
+                driver=request.user
+            )
+            return Response({'success': True})
+        else:
+            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
+
+
+class TripRemoveAPI(APIView):
+    # TODO Make remove api
+    """
+    This view will check if input user from_city and destination_city is exist and then,
+    if data is valid,
+    check if current user is driver of trip with request title.
+    If check is correct, article with request title will be remove from base.
+    """
+    serializer_class = ArticleRemoveSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            validate_data = serializer.validated_data
+            article = Article.objects.get(title=validate_data.get('title'))
+            # check if user is author of article with request title
+            if article.author != request.user:
+                raise ValidationError(
+                    'Sorry, but you can\'t delete not your articles')
+            # remove article with request title
+            else:
+                article.delete()
+                return Response({'success': True})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class TripSearchAPI(APIView):
+    # TODO Search API
     """
     This view will found all articles by input user keyword in title and body,
     and return all of them.
