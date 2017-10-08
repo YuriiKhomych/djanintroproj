@@ -2,27 +2,33 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 
 from utils import random_word
 from utils import gen_page_list
 
-
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.authtoken.models import Token
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+
 from accounts.models import User
+from blog.models import Article
 
 
 from .serializers import (UserLoginSerializer, UserSerializer,
-    UserCreationSerializer, UserChangePasswordSerializer,
     UserMainInfoSerializer, UserRegistrationSerializer,
     MyUserChangePasswordSerializer, UserForgetPasswordSerializer,
-    UserShortInfoSerializer)
+    UserShortInfoSerializer,
+    ArticleSerializer,
+    ArticleFullDataSerializer,
+    ArticleCreateSerializer,
+    ArticleRemoveSerializer,
+    ArticleSearchSerializer
+)
 
 
 # accounts API view
@@ -216,3 +222,112 @@ class MainUserFieldsView(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ArticlesView(GenericAPIView):
+    serializer_class = ArticleSerializer
+
+    def get_queryset(self):
+        return Article.objects.all().order_by('id')
+
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('pk'):
+            article = self.get_object()
+            serializer = self.serializer_class(article)
+            return Response(serializer.data)
+        else:
+            return self.list(request)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+
+class ArticlesAllAPI(ListAPIView):
+    """
+    This view will return response with full articles
+    (title, body, data, author, liked_by),
+    but divided into 10 users objects at the one response.
+    Used limit and offset.
+    """
+    queryset = Article.objects.all()
+    serializer_class = ArticleFullDataSerializer
+    pagination_class = LimitOffsetPagination
+
+
+class ArticleCreateAPI(APIView):
+    """
+    This view will check input user unique title name and then,
+    if data is valid, create new article
+    and return success message
+    """
+    serializer_class = ArticleCreateSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            validate_data = serializer.validated_data
+            # create new article and save in base
+            new_article = Article.objects.create(
+                title=validate_data.get('title'),
+                body=validate_data.get('body'),
+                author=request.user
+            )
+            return Response({'success': True})
+        else:
+            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
+
+
+class ArticleRemoveAPI(APIView):
+    """
+    This view will check if input user title is exist and then,
+    if data is valid,
+    check if current user is author of article with request title.
+    If check is correct, article with request title will be remove from base.
+    """
+    serializer_class = ArticleRemoveSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            validate_data = serializer.validated_data
+            article = Article.objects.get(title=validate_data.get('title'))
+            # check if user is author of article with request title
+            if article.author != request.user:
+                raise ValidationError(
+                    'Sorry, but you can\'t delete not your articles')
+            # remove article with request title
+            else:
+                article.delete()
+                return Response({'success': True})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticlesSearchAPI(APIView):
+    """
+    This view will found all articles by input user keyword in title and body,
+    and return all of them.
+    """
+    serializer_class = ArticleSearchSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            keyword = serializer.validated_data.get('search_keyword')
+            # filter by input user keyword in articles title and body
+            articles = Article.objects.filter(
+                Q(title__contains=keyword) | Q(body__contains=keyword))
+            return Response(ArticleFullDataSerializer(
+                articles, many=True).data)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)

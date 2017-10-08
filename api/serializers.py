@@ -7,7 +7,6 @@ from trips.models import Trip
 
 
 # accounts serializers
-
 class UserSerializer(serializers.ModelSerializer):
     likes_number = serializers.SerializerMethodField()
     articles = serializers.SerializerMethodField()
@@ -269,6 +268,7 @@ class ArticleSearchSerializer(serializers.Serializer):
     letters in article title or body.
     """
     search_keyword = serializers.CharField()
+
 
 # trip serializers
 class TripSerializer(serializers.ModelSerializer):
