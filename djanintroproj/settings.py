@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     # my apps
+    'api',
     'blog',
     'core',
     'accounts',

@@ -11,7 +11,8 @@ urlpatterns = [
 
     url(r'^', include('blog.urls')),
     url(r'^accounts/', include('accounts.urls')),
-    url(r'^trips/', include('trips.urls'))
+    url(r'^trips/', include('trips.urls')),
+    url(r'^api/', include('api.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # local
