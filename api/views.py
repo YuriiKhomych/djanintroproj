@@ -74,6 +74,7 @@ class UserShortInfoAPI(ListAPIView):
 
 
 class UserLoginAPI(APIView):
+    # Serializer not valid
     """
     This view will check input user email and password then,
      if data is valid, login him in system
@@ -406,25 +407,25 @@ class TripRemoveAPI(APIView):
     """
     This view will check if input user from_city and destination_city is exist and then,
     if data is valid,
-    check if current user is driver of trip with request title.
+    check if current user is driver of trip with request from_city and destination_city.
     If check is correct, article with request title will be remove from base.
     """
-    serializer_class = ArticleRemoveSerializer
+    serializer_class = TripRemoveSerializer
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-
         if serializer.is_valid():
             validate_data = serializer.validated_data
-            article = Article.objects.get(title=validate_data.get('title'))
-            # check if user is author of article with request title
-            if article.author != request.user:
+            trip = Trip.objects.get(
+                from_city=validate_data.get('from_city'),
+                destination_city=validate_data.get('destination_city')
+            )
+            if trip.driver != request.user:
                 raise ValidationError(
                     'Sorry, but you can\'t delete not your articles')
-            # remove article with request title
             else:
-                article.delete()
+                trip.delete()
                 return Response({'success': True})
         else:
             return Response(serializer.errors,
@@ -437,7 +438,7 @@ class TripSearchAPI(APIView):
     This view will found all articles by input user keyword in title and body,
     and return all of them.
     """
-    serializer_class = ArticleSearchSerializer
+    serializer_class = TripSearchSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -446,10 +447,10 @@ class TripSearchAPI(APIView):
         if serializer.is_valid():
             keyword = serializer.validated_data.get('search_keyword')
             # filter by input user keyword in articles title and body
-            articles = Article.objects.filter(
-                Q(title__contains=keyword) | Q(body__contains=keyword))
+            trips = Trip.objects.filter(
+                Q(from_city__contains=keyword))
             return Response(ArticleFullDataSerializer(
-                articles, many=True).data)
+                trips, many=True).data)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)

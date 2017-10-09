@@ -82,21 +82,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'password']
 
-    def validate(self, attrs):
-        # check email
-        if not self.Meta.model.objects.filter(
-                email__iexact=attrs.get('email')):
-            raise serializers.ValidationError(
-                'The username exists. Please try another one.')
-        # check password
-        else:
-            data = self.Meta.model.objects.get(
-                email=attrs.get('email'))
-            if not data.check_password(attrs.get('password')):
-                raise serializers.ValidationError(
-                    'The password wrong. Please try another one.')
-        return attrs
-
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
