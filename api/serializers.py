@@ -293,10 +293,11 @@ class TripRemoveSerializer(serializers.ModelSerializer):
     Class based on Trip model and describes the interface for removing
     trip by from_city and destination_city fields,
     """
-    title = serializers.CharField()
+    from_city = serializers.CharField()
+    destination_city = serializers.CharField()
 
     class Meta:
-        model = Article
+        model = Trip
         fields = ['from_city', 'destination_city']
 
 
@@ -305,4 +306,5 @@ class TripSearchSerializer(serializers.Serializer):
     Class based on Serializer model and describes the interface for searching
     trip by some words or letters in article title or body.
     """
-    search_keyword = serializers.CharField()
+    from_city = serializers.CharField()
+    destination_city = serializers.CharField()
