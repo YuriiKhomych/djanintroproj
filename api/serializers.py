@@ -78,9 +78,23 @@ class UserLoginSerializer(serializers.ModelSerializer):
     Class based on User model and 
     describes the interface for user login request.
     """
+
+    email = serializers.CharField(max_length=200)
+
     class Meta:
         model = User
         fields = ['email', 'password']
+
+    def validate(self, attrs):
+
+        if not self.Meta.model.objects.filter(email__iexact=attrs.get('email')):
+            raise serializers.ValidationError('The email does not exists.')
+
+        else:
+            data = self.Meta.model.objects.get(email=attrs.get('email'))
+            if not data.check_password(attrs.get('password')):
+                raise serializers.ValidationError('Password isn`t correct')
+        return attrs
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
