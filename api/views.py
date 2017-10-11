@@ -88,7 +88,7 @@ class UserLoginAPI(APIView):
 
         if request.user.is_authenticated():
             return Response({'Sorry, you are already login'},
-                            status=status.HTTP_409_CONFLICT)
+                            status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer.is_valid():
                 validate_data = serializer.validated_data
@@ -381,7 +381,7 @@ class TripCreateAPI(APIView):
     and return success message
     """
     serializer_class = TripCreateSerializer
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = IsAuthenticated
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -411,7 +411,7 @@ class TripRemoveAPI(APIView):
     If check is correct, article with request title will be remove from base.
     """
     serializer_class = TripRemoveSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = IsAuthenticated
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -423,7 +423,7 @@ class TripRemoveAPI(APIView):
             )
             if trip.driver != request.user:
                 raise ValidationError(
-                    'Sorry, but you can\'t delete not your articles')
+                    'Sorry, but you can\'t delete not your trip')
             else:
                 trip.delete()
                 return Response({'success': True})
@@ -433,13 +433,13 @@ class TripRemoveAPI(APIView):
 
 
 class TripSearchAPI(APIView):
-    # TODO Search API
     """
-    This view will found all articles by input user keyword in title and body,
+    This view will found all trips by input user from_city_keyword
+    and destination_city_keyword
     and return all of them.
     """
     serializer_class = TripSearchSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = AllowAny
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
