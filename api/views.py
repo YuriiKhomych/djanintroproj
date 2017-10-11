@@ -4,6 +4,8 @@ from django.core.mail import send_mail
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
 
 from utils import random_word
 from utils import gen_page_list
@@ -14,101 +16,34 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.authtoken.models import Token
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination, \
+    LimitOffsetPagination
 
 from accounts.models import User
 from blog.models import Article
 from trips.models import Trip
 
-
-from .serializers import (UserLoginSerializer, UserSerializer,
-    UserMainInfoSerializer, UserRegistrationSerializer,
-    MyUserChangePasswordSerializer, UserForgetPasswordSerializer,
-    UserShortInfoSerializer,
-    ArticleSerializer,
-    ArticleFullDataSerializer,
-    ArticleCreateSerializer,
-    ArticleRemoveSerializer,
-    ArticleSearchSerializer,
-    TripCreateSerializer,
-    TripFullDataSerializer,
-    TripRemoveSerializer,
-    TripSearchSerializer,
-    TripSerializer
-)
+from .serializers import (UserLoginSerializer,
+                          UserSerializer,
+                          UserMainInfoSerializer,
+                          UserRegistrationSerializer,
+                          MyUserChangePasswordSerializer,
+                          UserForgetPasswordSerializer,
+                          UserShortInfoSerializer,
+                          ArticleSerializer,
+                          ArticleFullDataSerializer,
+                          ArticleCreateSerializer,
+                          ArticleRemoveSerializer,
+                          ArticleSearchSerializer,
+                          TripCreateSerializer,
+                          TripFullDataSerializer,
+                          TripRemoveSerializer,
+                          TripSearchSerializer,
+                          TripSerializer
+                          )
 
 
 # accounts API view
-class UsersView(GenericAPIView):
-    """
-    Get all info about users
-    """
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        return User.objects.all().order_by('id')
-
-    def get(self, request, *args, **kwargs):
-        if kwargs.get('pk'):
-            user = self.get_object()
-            serializer = self.serializer_class(user)
-            return Response(serializer.data)
-        else:
-            return self.list(request)
-
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
-
-
-class UserShortInfoAPI(ListAPIView):
-    """
-    This view will return response with
-    short information(id, username, email, date_joined) about all users,
-    and divided into 10 users objects at the one page.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserShortInfoSerializer
-    pagination_class = PageNumberPagination
-
-
-class UserLoginAPI(APIView):
-    # Serializer not valid
-    """
-    This view will check input user email and password then,
-     if data is valid, login him in system
-    end send back response with user basic information:
-     username, email, first_name, date_joined.
-    """
-    serializer_class = UserLoginSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if request.user.is_authenticated():
-            return Response({'Sorry, you are already login'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        else:
-            if serializer.is_valid():
-                validate_data = serializer.validated_data
-
-                user = get_object_or_404(User, email=validate_data.get('email'))
-                Token.objects.get_or_create(user=user)
-                token = get_object_or_404(Token, user=user)
-
-                # authenticate user
-                authenticate(email=validate_data.get('email'),
-                             password=validate_data.get('password'))
-
-                return Response({'token': token.key})
-            else:
-                return Response(
-                    serializer.errors,
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-
 class UserRegistrationAPI(APIView):
     """
     This view will check input user name, email,
@@ -143,6 +78,76 @@ class UserRegistrationAPI(APIView):
                 return Response(
                     serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserShortInfoAPI(ListAPIView):
+    """
+    This view will return response with
+    short information(id, username, email, date_joined) about all users,
+    and divided into 10 users objects at the one page.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserShortInfoSerializer
+    pagination_class = PageNumberPagination
+
+
+class UsersViewAPI(GenericAPIView):
+    """
+    Get all info about users
+    """
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        return User.objects.all().order_by('id')
+
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('pk'):
+            user = self.get_object()
+            serializer = self.serializer_class(user)
+            return Response(serializer.data)
+        else:
+            return self.list(request)
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+
+class UserLoginAPI(APIView):
+    # Serializer not valid
+    """
+    This view will check input user email and password, after that
+     if data is valid, login him in system
+     and send back response with user basic information:
+     username, email, first_name, date_joined.
+    """
+    serializer_class = UserLoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if request.user.is_authenticated():
+            return Response({'Sorry, you are already login'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if serializer.is_valid():
+                validate_data = serializer.validated_data
+
+                user = get_object_or_404(User, email=validate_data.get('email'))
+                Token.objects.get_or_create(user=user)
+                token = get_object_or_404(Token, user=user)
+
+                # authenticate user
+                authenticate(email=validate_data.get('email'),
+                             password=validate_data.get('password'))
+
+                return Response({'token': token.key})
+            else:
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
 
 class UserForgetPasswordAPI(APIView):
@@ -180,9 +185,12 @@ class UserForgetPasswordAPI(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class ChangeUserPasswordView(APIView):
+class ChangeUserPasswordAPI(APIView):
+    """
+        User can change old password to new.
+    """
     serializer_class = MyUserChangePasswordSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = IsAuthenticated
 
     def post(self, request):
         serializer = self.serializer_class(
@@ -195,34 +203,6 @@ class ChangeUserPasswordView(APIView):
             return Response({'success': True})
         else:
             return Response(serializer.errors)
-
-    def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response(serializer.data)
-
-
-class MainUserFieldsView(APIView):
-    serializer_class = UserMainInfoSerializer
-
-    def post(self, request):
-        username = request.data.get('email', None)
-        password = request.data.get('password', None)
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                user_info = {
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "email": user.email,
-                    "username": user.username
-                }
-                return Response(user_info)
-            else:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 # blog API
@@ -265,7 +245,7 @@ class ArticleCreateAPI(APIView):
     and return success message
     """
     serializer_class = ArticleCreateSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = IsAuthenticated
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -273,12 +253,12 @@ class ArticleCreateAPI(APIView):
         if serializer.is_valid():
             validate_data = serializer.validated_data
             # create new article and save in base
-            new_article = Article.objects.create(
+            Article.objects.create(
                 title=validate_data.get('title'),
                 body=validate_data.get('body'),
                 author=request.user
             )
-            return Response({'success': True})
+            return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
@@ -334,6 +314,7 @@ class ArticlesSearchAPI(APIView):
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
 
+
 # trip API
 class TripView(GenericAPIView):
     serializer_class = TripSerializer
@@ -374,6 +355,7 @@ class TripCreateAPI(APIView):
     and return success message
     """
     serializer_class = TripCreateSerializer
+
     # permission_classes = IsAuthenticated
 
     def post(self, request):
@@ -439,7 +421,8 @@ class TripSearchAPI(APIView):
 
         if serializer.is_valid():
             from_city_keyword = serializer.validated_data.get('from_city')
-            destination_city_keyword = serializer.validated_data.get('destination_city')
+            destination_city_keyword = serializer.validated_data.get(
+                'destination_city')
             trip = Trip.objects.filter(
                 Q(from_city__contains=from_city_keyword) &
                 Q(destination_city__contains=destination_city_keyword)

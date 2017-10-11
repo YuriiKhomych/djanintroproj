@@ -187,7 +187,6 @@ class MyUserChangePasswordSerializer(serializers.Serializer):
         if attrs.get('old_password') == attrs.get('new_password1'):
             raise serializers.ValidationError(
                 'You can\'t use old password like new password')
-
         return attrs
 
 
