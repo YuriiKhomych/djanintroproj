@@ -127,8 +127,7 @@ class UserRegistrationAPI(APIView):
         serializer = self.serializer_class(data=request.data)
         # Add permission class in future
         if request.user.is_authenticated():
-            return Response({'Sorry, you are registered'},
-                            status=status.HTTP_409_CONFLICT)
+            return Response({'Success': False}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer.is_valid():
                 validate_data = serializer.validated_data
@@ -145,7 +144,7 @@ class UserRegistrationAPI(APIView):
                     password=validate_data.get('password')))
                 # create token
                 token = Token.objects.create(user=user)
-                return JsonResponse(token.key)
+                return Response({'token': token.key})
             else:
                 return Response(
                     serializer.errors,
