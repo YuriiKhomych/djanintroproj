@@ -92,22 +92,16 @@ class UserLoginAPI(APIView):
         else:
             if serializer.is_valid():
                 validate_data = serializer.validated_data
+
+                user = get_object_or_404(User, email=validate_data.get('email'))
+                Token.objects.get_or_create(user=user)
+                token = get_object_or_404(Token, user=user)
+
                 # authenticate user
-                user = authenticate(email=validate_data.get('email'),
-                                    password=validate_data.get('password'))
-                if user:
-                    # collect information about user
-                    user_data = User.objects.get(
-                        email__iexact=validate_data.get('email'))
-                    context = {
-                        'username': user_data.username,
-                        'email': user_data.email,
-                        'first_name': user_data.first_name,
-                        'date_joined': user_data.date_joined,
-                        }
-                    return Response(context)
-                else:
-                    return 'User does not exist'
+                authenticate(email=validate_data.get('email'),
+                             password=validate_data.get('password'))
+
+                return Response({'token': token.key})
             else:
                 return Response(
                     serializer.errors,
