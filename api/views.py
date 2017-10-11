@@ -447,11 +447,11 @@ class TripSearchAPI(APIView):
         if serializer.is_valid():
             from_city_keyword = serializer.validated_data.get('from_city')
             destination_city_keyword = serializer.validated_data.get('destination_city')
-            # filter by input user keyword in articles title and body
             trip = Trip.objects.filter(
-                Q(from_city__contains=from_city_keyword) & Q(destination_city__contains=destination_city_keyword))
-            return Response(TripFullDataSerializer(
-                trip, many=True).data)
+                Q(from_city__contains=from_city_keyword) &
+                Q(destination_city__contains=destination_city_keyword)
+            )
+            return Response(TripFullDataSerializer(trip, many=True).data)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
