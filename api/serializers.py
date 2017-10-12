@@ -227,7 +227,7 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Article
-        fields = ['title', 'body']
+        fields = ('title', 'body', 'author')
 
     def validate(self, attrs):
         # check the title name for uniqueness
