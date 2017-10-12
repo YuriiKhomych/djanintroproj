@@ -14,7 +14,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import (
+    DestroyAPIView
+)
 from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination, \
     LimitOffsetPagination
@@ -263,33 +265,14 @@ class ArticleCreateAPI(APIView):
             return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
 
-class ArticleRemoveAPI(APIView):
+class ArticleRemoveAPI(DestroyAPIView):
     """
-    This view will check if input user title is exist and then,
-    if data is valid,
-    check if current user is author of article with request title.
-    If check is correct, article with request title will be remove from base.
+    Delete article by id
     """
+    queryset = Article.objects.all()
     serializer_class = ArticleRemoveSerializer
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = IsAuthenticated
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            validate_data = serializer.validated_data
-            article = Article.objects.get(title=validate_data.get('title'))
-            # check if user is author of article with request title
-            if article.author != request.user:
-                raise ValidationError(
-                    'Sorry, but you can\'t delete not your articles')
-            # remove article with request title
-            else:
-                article.delete()
-                return Response({'success': True})
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class ArticlesSearchAPI(APIView):
