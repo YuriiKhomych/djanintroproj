@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import (
+    ListCreateAPIView,
     DestroyAPIView
 )
 from rest_framework.authtoken.models import Token
@@ -240,29 +241,12 @@ class ArticlesAllAPI(ListAPIView):
     pagination_class = LimitOffsetPagination
 
 
-class ArticleCreateAPI(APIView):
+class ArticleCreateAPI(ListCreateAPIView):
     """
-    This view will check input user unique title name and then,
-    if data is valid, create new article
-    and return success message
+    Create article by fill title and body key and value
     """
+    queryset = Article.objects.all()
     serializer_class = ArticleCreateSerializer
-    permission_classes = IsAuthenticated
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            validate_data = serializer.validated_data
-            # create new article and save in base
-            Article.objects.create(
-                title=validate_data.get('title'),
-                body=validate_data.get('body'),
-                author=request.user
-            )
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
 
 
 class ArticleRemoveAPI(DestroyAPIView):
