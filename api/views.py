@@ -18,7 +18,8 @@ from rest_framework.generics import (
     GenericAPIView,
     ListAPIView,
     ListCreateAPIView,
-    DestroyAPIView
+    RetrieveUpdateDestroyAPIView,
+
 )
 from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination, \
@@ -251,9 +252,9 @@ class ArticleCreateAPI(ListCreateAPIView):
     serializer_class = ArticleCreateSerializer
 
 
-class ArticleRemoveAPI(DestroyAPIView):
+class ArticleRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
     """
-    Delete article by id
+    Delete, Update, Retrieve article by id
     """
     queryset = Article.objects.all()
     serializer_class = ArticleRemoveSerializer
