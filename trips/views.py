@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.views.generic import View
 from django.db.utils import IntegrityError
 
-
 from .models import Trip, Comment
 from .forms import CreateNewTrip, CommentForm, AddToCartForm, SearchForm
 
@@ -19,7 +18,8 @@ class AllTrips(View):
     def get(self, request):
         form = SearchForm(request.GET)
         if form.is_valid():
-            keyword_search_from_city = request.GET.get('search_from_city', '')
+            keyword_search_from_city = request.GET.get(
+                'search_from_city', '')
             keyword_search_destination = request.GET.get(
                 'search_destination', '')
             trips = Trip.objects.filter(
@@ -29,16 +29,13 @@ class AllTrips(View):
         else:
             form = SearchForm()
             trips = Trip.objects.all()
-        # trip = Trip.objects.all()
         page = request.GET.get('page', 1)
-        p = Paginator(trips, 1)
+        p = Paginator(trips, 3)
         try:
             final_trips = p.page(page)
         except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
             final_trips = p.page(1)
         except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
             final_trips = p.page(p.num_pages)
         return render(request,
                       'trips.html',
