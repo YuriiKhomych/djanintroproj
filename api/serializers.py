@@ -3,17 +3,21 @@ from rest_framework.response import Response
 
 from accounts.models import User
 from blog.models import Article
+from trips.models import Trip
 
-from blog.serializers import ArticleSerializer
 
-
+# accounts serializers
 class UserSerializer(serializers.ModelSerializer):
     likes_number = serializers.SerializerMethodField()
     articles = serializers.SerializerMethodField()
+    trips = serializers.SerializerMethodField()
 
     def get_articles(self, obj):
         return ArticleSerializer(Article.objects.filter(
             liked_by__in=[obj]), many=True).data
+
+    def get_trips(self, obj):
+        return Trip.objects.filter(driver_id=obj.id).count()
 
     def get_likes_number(self, obj):
         return Article.objects.filter(liked_by__in=[obj]).count()
@@ -28,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
             'photo',
             'birthday',
             'likes_number',
-            'articles'
+            'articles',
+            'trips',
         )
 
 
@@ -73,23 +78,22 @@ class UserLoginSerializer(serializers.ModelSerializer):
     Class based on User model and 
     describes the interface for user login request.
     """
+
+    email = serializers.CharField(max_length=200)
+
     class Meta:
         model = User
         fields = ['email', 'password']
 
     def validate(self, attrs):
-        # check email
-        if not self.Meta.model.objects.filter(
-                email__iexact=attrs.get('email')):
-            raise serializers.ValidationError(
-                'The username exists. Please try another one.')
-        # check password
+
+        if not self.Meta.model.objects.filter(email__iexact=attrs.get('email')):
+            raise serializers.ValidationError('The email does not exists.')
+
         else:
-            data = self.Meta.model.objects.get(
-                email=attrs.get('email'))
+            data = self.Meta.model.objects.get(email=attrs.get('email'))
             if not data.check_password(attrs.get('password')):
-                raise serializers.ValidationError(
-                    'The password wrong. Please try another one.')
+                raise serializers.ValidationError('Password isn`t correct')
         return attrs
 
 
@@ -183,7 +187,6 @@ class MyUserChangePasswordSerializer(serializers.Serializer):
         if attrs.get('old_password') == attrs.get('new_password1'):
             raise serializers.ValidationError(
                 'You can\'t use old password like new password')
-
         return attrs
 
 
@@ -194,3 +197,127 @@ class UserMainInfoSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ('email', 'password')
+
+
+# blog serializers
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ('id', 'title')
+
+
+class ArticleFullDataSerializer(serializers.ModelSerializer):
+    """
+    Class based on Article model and describes the
+    interface with full information about article:
+    title, body, data, author, liked_by.
+    """
+
+    class Meta:
+        model = Article
+        fields = ['title', 'body', 'author', 'liked_by']
+
+
+class ArticleCreateSerializer(serializers.ModelSerializer):
+    """
+    Class based on Article model and describes the
+    interface for creating new article.
+    User can write only article title and body,
+    author and data will add automaticaly.
+    """
+    class Meta:
+        model = Article
+        fields = ('title', 'body', 'author')
+
+    def validate(self, attrs):
+        # check the title name for uniqueness
+        if Article.objects.filter(title__exact=attrs.get('title')).exists():
+            raise serializers.ValidationError(
+                'Sorry, article with this title already exist. Please rename your article title'
+            )
+        return attrs
+
+
+class ArticleRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
+    """
+    Class based on Article model and describes the interface for removing
+    article by title,
+    I suppose user know only this article parameter and don't see article id.
+    """
+    title = serializers.CharField()
+
+    class Meta:
+        model = Article
+        fields = ['title', 'body']
+
+    def validate(self, attrs):
+        # check if the title is exist
+        if not Article.objects.filter(title__exact=attrs.get('title')).exists():
+            raise serializers.ValidationError(
+                'Sorry, but article with title {} not exist'.format(
+                    attrs.get('title')))
+        return attrs
+
+
+class ArticleSearchSerializer(serializers.Serializer):
+    """
+    Class based on Serializer model and describes the interface for searching
+    article by some words or
+    letters in article title or body.
+    """
+    search_keyword = serializers.CharField()
+
+
+# trip serializers
+class TripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = ('id', 'from_city', 'destination_city')
+
+
+class TripFullDataSerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the
+    interface with full information about road trip:
+    title, body, data, author, liked_by.
+    """
+
+    class Meta:
+        model = Trip
+        fields = ['id', 'from_city', 'destination_city', 'date', 'time',
+                  'passengers', 'max_passengers', 'driver', 'views']
+
+
+class TripCreateSerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the
+    interface for creating new Trip.
+    User can write only article title and body,
+    author and data will add automaticaly.
+    """
+    class Meta:
+        model = Trip
+        fields = ['from_city', 'destination_city', 'date', 'time',
+                  'max_passengers', 'driver']
+
+
+class TripRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
+    """
+    Class based on Trip model and describes the interface for removing
+    trip by from_city and destination_city fields,
+    """
+    from_city = serializers.CharField()
+    destination_city = serializers.CharField()
+
+    class Meta:
+        model = Trip
+        fields = ['from_city', 'destination_city']
+
+
+class TripSearchSerializer(serializers.Serializer):
+    """
+    Class based on Serializer model and describes the interface for searching
+    trip by some words or letters in article title or body.
+    """
+    from_city = serializers.CharField()
+    destination_city = serializers.CharField()
