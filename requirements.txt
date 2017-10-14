@@ -1,4 +1,6 @@
 Django==1.11.2
+django-bootstrap==0.2.4
+django-bootstrap3==9.0.0
 django-solo==1.1.2
 django-wysiwyg-redactor==0.5.1
 djangorestframework==3.6.3
