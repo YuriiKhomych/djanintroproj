@@ -39,7 +39,7 @@ from .serializers import (UserLoginSerializer,
                           ArticleSerializer,
                           ArticleFullDataSerializer,
                           ArticleCreateSerializer,
-                          ArticleRemoveSerializer,
+                          ArticleRetrieveUpdateDestroySerializer,
                           ArticleSearchSerializer,
                           TripCreateSerializer,
                           TripFullDataSerializer,
@@ -257,8 +257,7 @@ class ArticleRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
     Delete, Update, Retrieve article by id
     """
     queryset = Article.objects.all()
-    serializer_class = ArticleRemoveSerializer
-    # permission_classes = IsAuthenticated
+    serializer_class = ArticleRetrieveUpdateDestroySerializer
 
 
 

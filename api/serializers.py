@@ -238,7 +238,7 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class ArticleRemoveSerializer(serializers.ModelSerializer):
+class ArticleRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     """
     Class based on Article model and describes the interface for removing
     article by title,
@@ -248,7 +248,7 @@ class ArticleRemoveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['title']
+        fields = ['title', 'body']
 
     def validate(self, attrs):
         # check if the title is exist

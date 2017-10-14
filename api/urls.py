@@ -36,7 +36,8 @@ urlpatterns = [
     url(r'^articles-rest/(?P<pk>\d+)/$', ArticlesView.as_view()),
     url(r'^articles-all-api/$', ArticlesAllAPI.as_view()),
     url(r'^articles-create-api/$', ArticleCreateAPI.as_view()),
-    url(r'^articles-retrieve-update-destroy-api/(?P<pk>\d+)/$', ArticleRetrieveUpdateDestroyAPI.as_view()),
+    url(r'^articles-retrieve-update-destroy-api/(?P<pk>\d+)/$',
+        ArticleRetrieveUpdateDestroyAPI.as_view()),
     url(r'^articles-search-api/$', ArticlesSearchAPI.as_view()),
     # trip API
     url(r'^trip-rest/$', TripView.as_view()),
