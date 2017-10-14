@@ -16,12 +16,3 @@ class Article(models.Model):
 
     def __str__(self):
         return '{} | {} | {}'.format(self.title, self.body, self.author.username)
-
-
-# 1. get article
-# 2. get user by article.author
-
-
-# foreign key
-# link to obj user
-# 1. get article(author due to link)

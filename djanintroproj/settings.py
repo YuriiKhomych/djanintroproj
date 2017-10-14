@@ -158,16 +158,16 @@ try:
 except ImportError:
     pass
 
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'yuriykhomich@gmail.com'
-# EMAIL_HOST_PASSWORD = 'bhvesoga479832'
-# EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'djangoroadtrip@gmail.com'
+EMAIL_HOST_PASSWORD = 'bh479832'
+EMAIL_PORT = 587
 
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '660a1cc630284f'
-EMAIL_HOST_PASSWORD = 'ea26f3756495d0'
-EMAIL_PORT = '2525'
+# EMAIL_HOST = 'smtp.mailtrap.io'
+# EMAIL_HOST_USER = '660a1cc630284f'
+# EMAIL_HOST_PASSWORD = 'ea26f3756495d0'
+# EMAIL_PORT = '2525'
 
 
 REST_FRAMEWORK = {
