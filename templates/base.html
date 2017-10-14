@@ -21,15 +21,15 @@
 <body>
 
 <div class="navbar-fixed">
-    <nav class="transparent">
+    <nav class="white">
         <div class="nav-wrapper">
             <a href="{% url 'all_trips' %}" class="brand-logo blue-text text-darken-2">Road Trip</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down ">
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if request.user.is_authenticated %}
-                <li><a class="blue-text text-darken-2" href="{% url 'all_articles' %}">Articles</a></li>
-                <li><a class="blue-text text-darken-2" href="{% url 'add_article' %}">Add new article</a></li>
-                <li><a class="blue-text text-darken-2" href="{% url 'all_trips' %}">All road trips</a></li>
-                <li><a class="blue-text text-darken-2" href="{% url 'add_trip' %}">Add new road trip</a></li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'all_articles' %}">Articles</a></li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'add_article' %}">Add new article</a></li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'all_trips' %}">All road trips</a></li>
+                    <li><a class="blue-text text-darken-2" href="{% url 'add_trip' %}">Add new road trip</a></li>
                     <li><a class="blue-text text-darken-2" href="{% url 'all_users' %}">All users</a></li>
                     <li class="blue-text text-darken-2">Hello, {{ request.user.email }}</li>
                     <li><a class="blue-text text-darken-2" href="{% url 'sign_out' %}">Sign out</a></li>
