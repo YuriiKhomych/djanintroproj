@@ -18,7 +18,7 @@ from .views import (
     TripView,
     TripAllAPI,
     TripCreateAPI,
-    TripRemoveAPI,
+    TripRetrieveUpdateDestroyAPI,
     TripSearchAPI
 )
 
@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^trip-rest/(?P<pk>\d+)/$', TripView.as_view()),
     url(r'^trip-all-api/$', TripAllAPI.as_view()),
     url(r'^trip-create-api/$', TripCreateAPI.as_view()),
-    url(r'^trip-remove-api/$', TripRemoveAPI.as_view()),
+    url(r'^trip-retrieve-update-destroy-api/(?P<pk>\d+)/$',
+        TripRetrieveUpdateDestroyAPI.as_view()),
     url(r'^trip-search-api/$', TripSearchAPI.as_view()),
 ]

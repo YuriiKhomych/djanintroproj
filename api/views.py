@@ -31,7 +31,6 @@ from trips.models import Trip
 
 from .serializers import (UserLoginSerializer,
                           UserSerializer,
-                          UserMainInfoSerializer,
                           UserRegistrationSerializer,
                           MyUserChangePasswordSerializer,
                           UserForgetPasswordSerializer,
@@ -43,7 +42,7 @@ from .serializers import (UserLoginSerializer,
                           ArticleSearchSerializer,
                           TripCreateSerializer,
                           TripFullDataSerializer,
-                          TripRemoveSerializer,
+                          TripRetrieveUpdateDestroySerializer,
                           TripSearchSerializer,
                           TripSerializer
                           )
@@ -317,63 +316,24 @@ class TripAllAPI(ListAPIView):
     pagination_class = LimitOffsetPagination
 
 
-class TripCreateAPI(APIView):
+class TripCreateAPI(ListCreateAPIView):
     """
     This view will check input user unique title name and then,
     if data is valid, create new article
     and return success message
     """
+    queryset = Trip.objects.all()
     serializer_class = TripCreateSerializer
 
-    # permission_classes = IsAuthenticated
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            validate_data = serializer.validated_data
-            # create new article and save in base
-            new_trip = Trip.objects.create(
-                from_city=validate_data.get('from_city'),
-                destination_city=validate_data.get('destination_city'),
-                date=validate_data.get('date'),
-                time=validate_data.get('time'),
-                max_passengers=validate_data.get('max_passengers'),
-                driver=request.user
-            )
-            return Response({'success': True})
-        else:
-            return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
-
-
-class TripRemoveAPI(APIView):
-    # TODO Make remove api
+class TripRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
     """
     This view will check if input user from_city and destination_city is exist and then,
     if data is valid,
     check if current user is driver of trip with request from_city and destination_city.
-    If check is correct, article with request title will be remove from base.
     """
-    serializer_class = TripRemoveSerializer
-    permission_classes = IsAuthenticated
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            validate_data = serializer.validated_data
-            trip = Trip.objects.get(
-                from_city=validate_data.get('from_city'),
-                destination_city=validate_data.get('destination_city')
-            )
-            if trip.driver != request.user:
-                raise ValidationError(
-                    'Sorry, but you can\'t delete not your trip')
-            else:
-                trip.delete()
-                return Response({'success': True})
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+    queryset = Trip.objects.all()
+    serializer_class = TripRetrieveUpdateDestroySerializer
 
 
 class TripSearchAPI(APIView):
@@ -383,7 +343,6 @@ class TripSearchAPI(APIView):
     and return all of them.
     """
     serializer_class = TripSearchSerializer
-    permission_classes = AllowAny
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)

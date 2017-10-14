@@ -301,7 +301,7 @@ class TripCreateSerializer(serializers.ModelSerializer):
                   'max_passengers', 'driver']
 
 
-class TripRemoveSerializer(serializers.ModelSerializer):
+class TripRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     """
     Class based on Trip model and describes the interface for removing
     trip by from_city and destination_city fields,
