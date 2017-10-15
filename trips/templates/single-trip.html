@@ -10,18 +10,22 @@
                             <b>Date of road trip</b>
                             <br>
                             {{ trip.date }}</p>
+                        <p class="white-text card-panel #ff8f00 amber darken-3">
+                            <b>Time of road trip</b>
+                            <br>
+                            {{ trip.time }}</p>
                         <p class="white-text card-panel #f57f17 yellow darken-4">
-                            <b>Passengers</b>
+                            <b>Count passengers</b>
                             <br> {{ trip.passengers.all.count }}</p>
-                        <p class="white-text card-panel #ffc400 amber accent-3">
-                            <b>Driver for road trip</b>
-                            <br> {{ trip.driver }}</p>
                         <p class="white-text card-panel #ff9100 orange accent-3">
                             <b>Passengers</b>
                             <br> {% for onemember in trip.passengers.all %}
                             {{ onemember }}<br/>
                         {% endfor %}</p>
-                        <a href="{% url 'join_passenger' trip_id=trip.id %}">
+                        <p class="white-text card-panel #ffc400 amber accent-3">
+                            <b>Driver for road trip</b>
+                            <br> {{ trip.driver }}</p>
+                        <a class="waves-effect waves-light btn" href="{% url 'join_passenger' trip_id=trip.id %}">
                             {% if request.user in trip.passengers.all %}
                                 Unjoin {{ trip.passengers.all.count }}
                             {% else %}
@@ -35,21 +39,25 @@
         {% for comment in comments %}
             <div class="col-md-9">
                 <div class="thumbnail">
-                    <h5>{{ comment.author }}, <img src="{{ comment.author.avatar.url }}" class="img-circle" width="50"
-                                                   height="50"> {{ comment.author.avatar_url }}
+                    <h5>{{ comment.author }},
+                        <img src="{{ comment.author.avatar.url }}" class="img-circle" width="50"
+                             height="50"> {{ comment.author.avatar_url }}
                         {% if comment.author_id == request.user.id or request.user.is_admin %}
                             <a href="{% url "delete_comment" comment_id=comment.id%}">delete</a>
                             <a href="{% url "edit_comment" comment_id=comment.id %}">edit</a>
                         {% endif %}
                     </h5>
                     <hr>
-                    <h6 class="pull-right">Date: {{ comment.date }}<br>
+                    <h6 class="pull-right">
+                        Date: {{ comment.date }}<br>
                         Rating: {{ comment.rating }}</h6>
                     <p> {{ comment.positive }}</p>
                     <p>{{ comment.negative }}</p>
                     <p>{{ comment.body }}</p>
                     {% if comment.edit_date != null %}
-                        <p class="comentedit">Edited {{ comment.edit_amount }} times. Last edit: {{ comment.edit_date }}</p>
+                        <p class="comentedit">
+                            Edited {{ comment.edit_amount }} times.
+                            Last edit: {{ comment.edit_date }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -62,9 +70,9 @@
                     <form action="{% url 'single_trip_page' trip_id=trip.id %}" method="post" class="form">
                         {% csrf_token %}
                         {{ commentform }}
-                            <button type="submit" class="btn btn-primary">
-                                Submit
-                            </button>
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
                     </form>
                     {% if commentform.errors %}
                         {% for field in commentform %}
@@ -81,7 +89,8 @@
                         {% endfor %}
                     {% endif %}
                 {% else %}
-                    <h4>Please, <a href="{% url 'login' %}">Log in</a> or <a href="{% url 'register' %}">Register</a> to leave a review!</h4>
+                    <h4>Please, <a href="{% url 'login' %}">Log in</a> or
+                        <a href="{% url 'register' %}">Register</a> to leave a review!</h4>
                 {% endif %}
             </div>
         </div>

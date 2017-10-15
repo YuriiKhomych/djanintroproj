@@ -3,11 +3,11 @@ from django import template
 register = template.Library()
 
 def rating(value):
-    if value < 10:
-        return "Hot"
-    elif value > 50:
-        return "Best"
+    if value < 1:
+        return "Quickly, join to us!"
+    elif value > 5:
+        return "You can choose place what you want"
     else:
-        return "Popular"
+        return "Hey! Go with us!"
 
 register.filter('rating', rating)

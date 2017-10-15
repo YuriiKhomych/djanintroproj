@@ -40,12 +40,13 @@
                                 <img src="{% if trip.image %}{{ trip.image.url }}{% else %}http://placecage.com/100/100{% endif %}">
                             </div>
                             <span class="card-title">
-                        Creator of trip: {{ trip.driver }}<br>
-                        Maximum passengers: {{ trip.max_passengers }}<br>
-                        Date of trip: {{ trip.date }}<br>
+                        Creator of trip: <b>{{ trip.driver.username }}</b><br>
+                        Maximum passengers: <b>{{ trip.max_passengers }}</b><br>
+                        Date of trip: <b>{{ trip.date }}</b><br>
+                        Time of trip: <b>{{ trip.time }}</b><br>
                             <ul class="collapsible popout" data-collapsible="accordion">
                                 Members:
-                                {{ trip.passengers.all.count }}<br>
+                                <b>{{ trip.passengers.all.count }}</b><br>
                                 </ul>
                     </span>
                         </div>
@@ -71,7 +72,6 @@
                     {% endif %}
 
                     {% for page in pagination %}
-                        {#                    1, 2, 3, [4], 5, 6, 7, 8, 9#}
                         <li class="waves-effect {% if page == trips.number %}active{% endif %}">
                             {% if page == '...' %}
                                 {{ page }}
